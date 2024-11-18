@@ -1,0 +1,17 @@
+displayName: Rewrite Body (with compression support)
+
+summary: Built on top of Traefik Rewrite Body plugin to also support gzip decompress -> update -> recompress.
+
+type: middleware
+
+import: github.com/packruler/rewrite-body
+
+testData:
+  lastModified: true
+  rewrites:
+    - regex: "bar"
+      replacement: "foo"
+  monitor:
+    types:
+      - text/html
+    methods: ["GET"]

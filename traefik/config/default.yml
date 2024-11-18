@@ -1,0 +1,91 @@
+http : 
+  middlewares : 
+    intranet : 
+      chain : 
+        middlewares : 
+          - local-only 
+          - default 
+    extranet : 
+      chain : 
+        middlewares : 
+          - default
+    defaulthttp : 
+      chain : 
+        middlewares : 
+          - my-plugin
+          - ratelimited
+          - compressd  
+    default : 
+      chain : 
+        middlewares : 
+          - my-plugin
+          - secured-redirect 
+          - secured-headers
+          # - buffered
+          # - ratelimited
+          - compressd 
+    secured-headers : 
+      headers : 
+        forceSTSHeader :  true 
+        stsPreload :  true 
+        stsSeconds :  '315360000'
+        stsIncludeSubdomains :  true 
+        browserXssFilter :  true 
+        contentTypeNosniff :  true 
+        frameDeny :  false
+        permissionsPolicy: "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        customFrameOptionsValue: SAMEORIGIN
+        referrerPolicy: "same-origin"
+        customResponseHeaders:
+          server: "" # hide server info from visitors
+        # accessControlAllowMethods:
+        #   - GET
+        #   - OPTIONS
+        #   - POST
+        #   - PUT
+        # accessControlAllowHeaders: "*"
+        # accessControlAllowOriginListRegex: ".*"
+        # addVaryHeader: true
+        # accessControlAllowCredentials: true
+        # accessControlMaxAge: 100
+        # hostsProxyHeaders:
+        #   - "X-Forwarded-Host"
+        # referrerPolicy: "same-origin"
+        # sslProxyHeaders:
+        #   X-Forwarded-Proto: https
+        # customResponseHeaders:
+        #   server: "" # hide server info from visitors
+    secured-redirect : 
+      redirectScheme : 
+        scheme :  https 
+        permanent :  true 
+    compressd : 
+      compress :  {}
+    buffered :
+      buffering :
+        maxRequestBodyBytes: 1048576000  # 1000MB
+    ratelimited:
+      ratelimit:
+        average: 100
+        burst: 30  
+        period: 1s
+    local-only : 
+      ipAllowList : 
+        sourceRange : 
+          - '127.0.0.1/32'
+          # local subnet 
+          - '192.168.1.0/24'
+          # docker subnet 
+          - '172.20.0.0/24'
+          # wireguard subnet 
+          - '10.13.13.0/24'
+    my-plugin:
+      plugin:
+        example:
+          Port: true
+    my-rewrite:
+      plugin:
+        rewritebody:
+          rewrites:
+          - regex: "src=\"https://g\\.alicdn\\.com/IMM/office-js/1\\.1\\.5/aliyun-web-office-sdk\\.min\\.js\""
+            replacement: ""
